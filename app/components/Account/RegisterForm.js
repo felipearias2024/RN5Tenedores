@@ -6,11 +6,25 @@ import { Input, Icon, Button } from "react-native-elements";
 export default function RegisterForm() {
   const [showPass, setShowPass] = useState(false);
   const [showRePass, setShowRePass] = useState(false);
+  const [formData, setFormData] = useState(defaultFormValue());
+
+  const onSubmit = () => {
+    console.log(formData);
+  };
+
+  const onChange = (e, type) => {
+    //console.log(type);
+    //console.log(e.nativeEvent.text);
+    //setFormData({ [type]: e.nativeEvent.text });
+    setFormData({ ...formData, [type]: e.nativeEvent.text });
+  };
+
   return (
     <View style={styles.formContainer}>
       <Input
         placeholder="Correo electronico"
         containerStyle={styles.inputForm}
+        onChange={(e) => onChange(e, "email")}
         rightIcon={
           <Icon
             type="material-community"
@@ -24,6 +38,7 @@ export default function RegisterForm() {
         containerStyle={styles.inputForm}
         password={true}
         secureTextEntry={showPass ? false : true}
+        onChange={(e) => onChange(e, "password")}
         rightIcon={
           <Icon
             type="material-community"
@@ -38,6 +53,7 @@ export default function RegisterForm() {
         containerStyle={styles.inputForm}
         password={true}
         secureTextEntry={showRePass ? false : true}
+        onChange={(e) => onChange(e, "repeatPassword")}
         rightIcon={
           <Icon
             type="material-community"
@@ -51,9 +67,18 @@ export default function RegisterForm() {
         title="Registrarse"
         containerStyle={styles.btnContainerRegister}
         buttonStyle={styles.btnRegister}
+        onPress={onSubmit}
       />
     </View>
   );
+}
+
+function defaultFormValue() {
+  return {
+    email: "",
+    password: "",
+    repeatPassword: "",
+  };
 }
 
 const styles = StyleSheet.create({
