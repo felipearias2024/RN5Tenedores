@@ -2,14 +2,41 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useState } from "react";
 import { Input, Icon, Button } from "react-native-elements";
+import { validateEmail } from "../../utils/validations";
+import { size, isEmpty } from "lodash";
+import * as firebase from "firebase";
+import { useNavigation } from "@react-navigation/native";
 
-export default function RegisterForm() {
+export default function RegisterForm(props) {
+  const navigation = useNavigation();
   const [showPass, setShowPass] = useState(false);
   const [showRePass, setShowRePass] = useState(false);
   const [formData, setFormData] = useState(defaultFormValue());
 
   const onSubmit = () => {
-    console.log(formData);
+    if (
+      isEmpty(formData.email) ||
+      isEmpty(formData.password) ||
+      isEmpty(formData.repeatPassword)
+    ) {
+      alert("Todos los campos son obligatorios");
+    } else if (!validateEmail(formData.email)) {
+      alert("el email no es correcto");
+    } else if (formData.password != formData.repeatPassword) {
+      alert("Las contraseñas deben ser iguales");
+    } else if (size(formData.password) < 6) {
+      alert("La contraseña debe tener al menos 6 caracteres");
+    } else {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(formData.email, formData.password)
+        .then(() => {
+          navigation.navigate("account");
+        })
+        .catch(() => {
+          alert("El email ya esta en uso");
+        });
+    }
   };
 
   const onChange = (e, type) => {
